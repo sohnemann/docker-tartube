@@ -32,11 +32,14 @@ RUN \
 	wget -q ${TARTUBE_URL} && \
 	dpkg -i python3-tartube_${TARTUBE_VERSION}.deb && \
 	del-pkg build-dependencies && \
-	rm -rf /tmp/* /tmp/.[!.]* && \
+	rm -rf /tmp/* /tmp/.[!.]*  && \
 	# Maximize only the main window.
     sed-patch 's/<application type="normal">/<application type="normal" title="Tartube">/' \
-        /etc/xdg/openbox/rc.xml
-
+        /etc/xdg/openbox/rc.xml && \
+	# Generate and install favicons.
+    APP_ICON_URL=https://raw.githubusercontent.com/angelics/unraid-docker-tartube/main/tartube_icon.png && \
+    install_app_icon.sh "$APP_ICON_URL"
+	
 # Set environment variables.
 ENV	APP_NAME="Tartube"
 
