@@ -1,15 +1,17 @@
 # Pull base image.
-FROM jlesage/baseimage-gui:ubuntu-20.04
-
-# Define download URLs.
-ARG TARTUBE_VERSION=2.4.165
-ARG TARTUBE_URL=https://github.com/axcore/tartube/releases/download/v${TARTUBE_VERSION}/python3-tartube_${TARTUBE_VERSION}.deb
+FROM jlesage/baseimage-gui:ubuntu-20.04-v4
 
 # Define working directory.
 WORKDIR /tmp
 
-# Add files
-COPY rootfs/ /
+# Generate and install favicons.
+RUN \
+	APP_ICON_URL=https://raw.githubusercontent.com/angelics/unraid-docker-tartube/main/tartube_icon.png && \
+	install_app_icon.sh "$APP_ICON_URL"
+
+# Define download URLs.
+ARG TARTUBE_VERSION=2.4.221
+ARG TARTUBE_URL=https://github.com/axcore/tartube/releases/download/v${TARTUBE_VERSION}/python3-tartube_${TARTUBE_VERSION}.deb
 
 ### Install Tartube
 RUN \
@@ -21,27 +23,28 @@ RUN \
 		python3-gi \
 		gir1.2-gtk-3.0 \
 		dbus-x11 \
-		at-spi2-core \
+		at-spi2-core \	
 		fonts-wqy-zenhei \
 		ffmpeg \
+		language-pack-en-base \
 		&& \
+	pip3 install --no-cache-dir --upgrade pip && pip3 install --no-cache-dir cairocffi && \
 	add-pkg --virtual build-dependencies \
 		wget \
 		&& \
-	echo "download tartbue..." && \
+	echo "download tartbue $TARTUBE_VERSION..." && \
 	wget -q ${TARTUBE_URL} && \
 	dpkg -i python3-tartube_${TARTUBE_VERSION}.deb && \
 	del-pkg build-dependencies && \
-	rm -rf /tmp/* /tmp/.[!.]*  && \
-	# Maximize only the main window.
-    sed-patch 's/<application type="normal">/<application type="normal" title="Tartube">/' \
-        /etc/xdg/openbox/rc.xml && \
-	# Generate and install favicons.
-    APP_ICON_URL=https://raw.githubusercontent.com/angelics/unraid-docker-tartube/main/tartube_icon.png && \
-    install_app_icon.sh "$APP_ICON_URL"
+	rm -rf /tmp/* /tmp/.[!.]*
+
+# Add files
+COPY rootfs/ /
 	
 # Set environment variables.
-ENV	APP_NAME="Tartube"
-
+RUN \
+    set-cont-env APP_NAME "Tartube" && \
+    set-cont-env APP_VERSION "$TARTUBE_VERSION"
+	
 # Define mountable directories.
-VOLUME ["/config", "/storage"]
+VOLUME ["/storage"]
