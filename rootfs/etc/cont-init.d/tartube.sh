@@ -1,3 +1,4 @@
+#!/bin/sh
 #!/usr/bin/with-contenv sh
 
 set -e # Exit immediately if a command exits with a non-zero status.
@@ -10,9 +11,6 @@ log() {
 # Make sure some directories are created.
 mkdir -p /storage
 mkdir -p /config
-
-# install dependency
-pip3 install cairocffi
 
 # Generate machine id.
 log "generating machine-id..."
