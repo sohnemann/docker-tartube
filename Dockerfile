@@ -26,9 +26,16 @@ RUN \
 		at-spi2-core \	
 		fonts-wqy-zenhei \
 		ffmpeg \
-		language-pack-en-base \
+		locales \
 		&& \
-	pip3 install --no-cache-dir --upgrade pip && pip3 install --no-cache-dir cairocffi && \
+    sed-patch 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    locale-gen && \
+	pip3 install --no-cache-dir --upgrade pip && pip3 install --no-cache-dir \
+		streamlink \
+		youtube-dl \
+		moviepy \
+		cairocffi \
+		&& \
 	add-pkg --virtual build-dependencies \
 		wget \
 		&& \
