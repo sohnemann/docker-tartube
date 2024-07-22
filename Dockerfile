@@ -1,5 +1,5 @@
 # Pull base image.
-FROM jlesage/baseimage-gui:ubuntu-20.04-v4
+FROM jlesage/baseimage-gui:ubuntu-22.04-v4
 
 # Define working directory.
 WORKDIR /tmp
@@ -33,6 +33,7 @@ RUN \
 	pip3 install --no-cache-dir --upgrade pip && pip3 install --no-cache-dir \
 		streamlink \
 		youtube-dl \
+  		yt-dlp \
 		moviepy \
 		cairocffi \
 		&& \
@@ -51,7 +52,8 @@ COPY rootfs/ /
 # Set environment variables.
 RUN \
     set-cont-env APP_NAME "Tartube" && \
-    set-cont-env APP_VERSION "$TARTUBE_VERSION"
-	
+    set-cont-env APP_VERSION "$TARTUBE_VERSION" && \
+    set-cont-env PATH "
+ 
 # Define mountable directories.
 VOLUME ["/storage"]
